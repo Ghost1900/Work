@@ -1,0 +1,47 @@
+#include<stdio.h>
+int func(int n)
+{if(n==1)
+{return 1;
+}
+if(n==2)
+{return 2;
+}
+if(n>=3)
+{return func(n-2)+func(n-1);
+}
+}
+int main()
+{int n;
+printf("请输入阶梯数:");
+scanf("%d",&n);
+printf("一共有%d种走法",func(n));
+return 0;
+}//递归法
+第2到8行的代码消耗了1+1+1+1+1=5个数据单元，第8到12行消耗了n-5个数据单元,第13到16行消耗了1+1+1+1个数据单元，消耗的数据单元总和为5+n-4=n+1,故时间复杂度为O(n)
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+#include<stdio.h>
+int func(int n)
+{if(n==1)
+{return 1;
+}
+if(n==2)
+{return 2;
+}
+int pre1=1;
+int pre2=2;
+int pre3;
+if(n>=3)
+{for(int i=3;i<=n;i++)
+{pre3=pre1+pre2;
+pre1=pre2;
+pre2=pre3;
+}
+return pre3;}
+}
+int main()
+{int n;
+printf("请输入阶梯数:");
+scanf("%d",&n);
+printf("一共有%d种走法",func(n));
+return 0;
+}//递推法
