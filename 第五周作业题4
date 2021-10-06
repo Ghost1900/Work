@@ -1,0 +1,27 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+bool func(char *A,int n)
+{if(n<=1)
+{return true;
+}
+else if(A[0]==A[n-1])
+{return func(A+1,n-2);}
+else {
+return false;}
+}
+int main()
+{int N;
+printf("请输入字符串的长度:");
+scanf("%d",&N);
+char A[N];
+printf("请输入字符串以进行判断:");
+scanf("%s",&A);
+if(func(A,N)==true)
+{printf("该字符串为回文字符串");
+}else{printf("该字符串不是回文字符串");
+}
+return 0;
+}//递归法
+
+————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
