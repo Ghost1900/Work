@@ -1,0 +1,50 @@
+#include<stdio.h>
+int shulie(int n)
+{if(n==0)
+{return 0;
+}
+if(n==1)
+{
+return 1;
+}
+if(n>=2)
+{return shulie(n-2)+shulie(n-1);
+}
+}
+int main()
+{int n;
+printf("请输入数列的大小");
+scanf("%d",&n);
+for(int v=1;v<=n;v++)
+{printf("%d ",shulie(v));}
+return 0;
+}//递归法 
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+#include<stdio.h>
+int shulie(int n)
+{if(n==1)
+{return 1;
+}
+{
+if(n>1)
+{
+int pre1=0;
+int pre2=1;
+int pre3;
+for(int j=1;j<n;j++)
+{pre3=pre2+pre1;
+pre1=pre2;
+pre2=pre3;
+}
+return pre3;}
+}}
+int main()
+{int n;
+printf("请输入数列的大小");
+scanf("%d",&n);
+for(int v=1;v<=n;v++)
+{printf("%d ",shulie(v));}
+return 0;
+}//递推法
+第24行到33行共消耗1+1+1+1+1+1+1=7个数据单元，第34行到37for循环共消耗n+n-1+1+n+n+n=5n个数据单元，39到44行共消耗1+1+1+1=4个数据单元，45行for循环共消耗1+n+1+n+n=3n+2个数据单元，故整行代码共消耗
+7+5n+4+3n+2=8n+13个数据单元，最好时间复杂度为O（1）,最坏时间复杂度为O(n),故时间复杂度为O（n）;
