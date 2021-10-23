@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+unsigned int getRadixValue(unsigned int value, unsigned int radix, unsigned int radixCount) {//此函数用于获得基数的值 
+    int radixValue = value;//初始化基数的值为所输入的值 
+    for (size_t i = 0; i < radixCount; ++i)
+    {
+        radixValue=radixValue/radix;//基数的值循环除以基数 
+    }
+    radixValue = radixValue % radix;//最后基数的值等于基数的值对基数求余 
+    return radixValue;   //返回基数的值 
+}
+bool radixSort(unsigned int array[], unsigned int arrLen, unsigned int radix) {
+    if (arrLen <= 1) {
+        return true;//如果数组里元素有0个或1个，返回真，即无需排序，直接输出即可 
+    }
+    //Find maximum and minimal value
+    int max = array[0];//初始化max最大值为数组中的首元素 
+    for (unsigned int i = 1; i < arrLen; ++i)//for循环遍历整个数组元素 
+    {
+         if (max < array[i]) {//如果max小于数组中第i-1个位置的元素 
+            max = array[i];//那么max最大值就等于数组中第i-1个位置的元素 
+        }
+    }
+    int radixCount = 0;//初始化基数计数为0 
+    while ((max/=radix) > 0) {//如果最大值除以基数大于0，即能大于基数，基数计数自增 
+        ++radixCount;
+    }
+    // Create counting buckets
+    int *countingRadixBuckets = new int[radix]();//初始化指针countingRadixBuckets为数组radix的指针 
+    int *tempArray = new int[arrLen]();//初始化指针tempArray为需排序的无序数组的arrlen的指针 
+    for (size_t radixIndex = 0; radixIndex <= radixCount; ++radixIndex)//for遍历基数数组radix 
+    {
+        // Count number of values in array
+        for (size_t j = 0; j < arrLen; ++j)
+        {
+            ++countingRadixBuckets[getRadixValue(array[j], radix, radixIndex)];//令指针countingRadixBuckets指向基数数组 
+        }                  													   //赋予无序数组第j-1个位置上的元素的基数的值,实行完后指向radix数组中下一个元素 
+        // Accumulate coutingBuckets to find the last ordered location of value in array
+        for (size_t k = 1; k < radix; ++k)
+        {
+            countingRadixBuckets[k] += countingRadixBuckets[k-1];//指针找到数组上一个位置的值 
+        }
+        //Traverse the array in reversed order
+        for (int l = arrLen - 1; l >= 0; --l)
+        {
+            tempArray[--countingRadixBuckets[getRadixValue(array[l], radix, radixIndex)]] = array[l];// 
+        }
+        for (size_t m = 0; m < arrLen; ++m)
+        {
+            array[m] = tempArray[m];//将排序完的数组导入原数组array，替换无序数组 
+        }
+        for (size_t n = 0; n < radix; ++n)//循环初始化radix数组里每个指针指向元素为0 
+        {
+            countingRadixBuckets[n] = 0;
+        }   
+    }
+    delete [] countingRadixBuckets;//释放countingRadixBuckets指针所占内存空间 
+    delete [] tempArray;   //释放tempArray指针所占内存空间 
+    return true;
+}
+void printArray(unsigned int array[], int arrLen) {//输出数组函数 
+    for (int i = 0; i < arrLen; ++i) {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
+int main(){
+    unsigned int array0[] = {};
+    unsigned int arrayLen = sizeof(array0)/sizeof(int);
+    printArray(array0, arrayLen);
+    radixSort(array0, arrayLen, 10);
+    printArray(array0, arrayLen);
+    cout << "=========================================" << endl;
+    unsigned int array1[] = {1};
+    arrayLen = sizeof(array1)/sizeof(int);
+    printArray(array1, arrayLen);
+    radixSort(array1, arrayLen, 10);
+    printArray(array1, arrayLen);
+    cout << "=========================================" << endl;
+    unsigned int array2[] = {20, 1};
+    arrayLen = sizeof(array2)/sizeof(int);
+    printArray(array2, arrayLen);
+    radixSort(array2, arrayLen, 10);
+    printArray(array2, arrayLen);
+    cout << "=========================================" << endl;
+    unsigned int array3[] = {1, 300, 30};
+    arrayLen = sizeof(array3)/sizeof(int);
+    printArray(array3, arrayLen);
+    radixSort(array3, arrayLen, 10);
+    printArray(array3, arrayLen);
+    cout << "=========================================" << endl;
+    unsigned int array4[] = {92, 29, 12, 121};
+    arrayLen = sizeof(array4)/sizeof(int);
+    printArray(array4, arrayLen);
+    radixSort(array4, arrayLen, 10);
+    printArray(array4, arrayLen);
+    cout << "=========================================" << endl;
+    unsigned int array5[] = {19, 33, 34, 999, 5};
+    arrayLen = sizeof(array5)/sizeof(int);
+    printArray(array5, arrayLen);
+    radixSort(array5, arrayLen, 10);
+    printArray(array5, arrayLen);
+     cout << "=========================================" << endl;
+    unsigned int array6[] = {90, 311, 34, 59, 57, 85, 107, 1277, 125, 143, 169, 162};
+    arrayLen = sizeof(array6)/sizeof(int);
+    printArray(array6, arrayLen);
+    radixSort(array6, arrayLen, 10);
+    printArray(array6, arrayLen);
+}
