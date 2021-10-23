@@ -1,0 +1,59 @@
+#include <iostream>
+#include <math.h>
+using namespace std;
+bool merge(int array[], size_t arrStart, size_t arrMiddle, size_t arrEnd) {
+    int arrLen = arrEnd - arrStart;//数组的长度为数组末尾位置减去数组首位置； 
+    if (arrLen < 2) {
+        cout << "Please check your implementation." << endl;
+        return false;//如果数组长度=1，则代表已有序，无需进行排序 
+    }
+    int *temp = new int(arrLen);//定义temp指针，其指向数组末尾的值 
+    int i = arrStart;//将i赋予数组开头元素的值 
+    int j = arrMiddle;//将j赋予数组中间的值 
+    int tempIndex = 0;//令交换索引的值为0 
+    while (i < arrMiddle && j < arrEnd) {//如果i尚未到达数组中间，且j尚未到达数组末尾 
+        if (array[i] > array[j]) {//如果数组第一个元素大于中间元素后一个元素 ，令索引值为第j-1个元素的值 
+            temp[tempIndex] = array[j];
+            ++j;
+        }
+        else {//否则令索引值为第i-1个元素的值 
+            temp[tempIndex] = array[i];
+            ++i;
+        }
+        ++tempIndex;// 
+    }
+    while (i < arrMiddle) {
+        temp[tempIndex++] = array[i++];
+    }//如果i仍旧未到达数组中间,则一直将数组上i的值赋予给索引值，同时继续向右执行 
+    while (j < arrEnd) {
+        temp[tempIndex++] = array[j++];
+    }//如果j仍旧未到达数组末尾 ，则一直将数组上j的值赋予给索引值，同时继续向左执行 
+    for ((tempIndex = 0, i = arrStart);
+	(tempIndex < arrLen && i < arrEnd);
+	(++tempIndex, ++i)) {
+        array[i] = temp[tempIndex];
+    }
+    delete []temp;//释放temp指针 
+    temp = NULL;//指针temp为空 
+    return true;
+}
+bool mergeSort(int array[], size_t arrStart, size_t arrEnd) {
+    int arrLen = arrEnd - arrStart;
+    if (arrLen < 0) {//当数组长度为负时 
+        cout << "Please check your input." << endl;
+        return false;
+    }
+    if (arrLen == 0 || arrLen == 1) {//即没有元素或仅有一个元素，无需排列 ，已有序 
+        return true;
+    } 
+    int middle = arrStart + floor(arrLen / 2);//设置数组中间值为起点加上数组长度除以2的值 
+    mergeSort(array, arrStart, middle);//递归调用归并排序 
+    mergeSort(array, middle, arrEnd);//递归调用归并排序 
+    return merge(array, arrStart, middle, arrEnd);
+}
+void printArray(int array[], int arrLen) {//此函数用于输出数组信息 
+    for (int i = 0; i < arrLen; ++i) {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
