@@ -1,97 +1,135 @@
 #include <iostream>
 #include <math.h>
-
 using namespace std;
-
-bool bubbleSort(int array[], size_t arrLen) {
-    if (arrLen < 0) {//不符合条件的数组不排序 
+bool insertSort(int array[], size_t arrLen) {//定义插入排序函数 
+    if (arrLen < 0) {//如果长度为小于0，则没有元素在其中，重新输入数组 
         cout << "Please check your input." << endl;
         return false;
     }
-
-
-    for (int orderedNum = 0; orderedNum < arrLen; ++orderedNum) {//利用for循环遍历整个数组
-        bool isExchanged = false;//定义判断是否完成排序条件isExchanged? 
-        for (int i = 0; i < arrLen - orderedNum -1; ++i) {//利用for循环进行次数递减的遍历，因为本次排序的最大元素已在数组末尾，无需再次遍历 
-            if (array[i] > array[i+1]) {//如果前一个元素大于后一个元素，进行交换。 
-                int temp = array[i];
-                array[i] = array[i+1];
-                array[i+1] = temp;
-                isExchanged = true;
+    for (int orderedNum = 1; orderedNum < arrLen; ++orderedNum) {//for循环遍历整个数组array[] 
+        int insertValue = array[orderedNum];//初始化插入的值为数组的第orderedNum-1个位置元素的值 
+        int orderedIndex = orderedNum - 1;//初始化orderedIndex索引值为orderedNum-1,即前一个位置的下表 
+        for (; orderedIndex >= 0; --orderedIndex) {//for循环从右向左遍历整个数组 
+            if (insertValue < array[orderedIndex]) {//如果插入的值小于数组在索引位置上的元素的值 
+                array[orderedIndex + 1] = array[orderedIndex];
+            }
+            else {//如果不满足条件，结束循环 
+                break;
             }
         }
-        if (!isExchanged) {//如果没进行交换，即已有序，结束循环 
-            break;
-        }
+        array[orderedIndex+1] = insertValue;//索引值的下一个元素作为插入值。 
     }
     return true;
 }
-
-bool bubbleSort_Sheng(int array[], size_t arrLen) {//冒泡排序
-    if (arrLen < 0) {//不符合条件的数组不排序 
+/*bool insertSort_Sen(int array[], size_t arrLen) {
+     if (arrLen < 0) {
         cout << "Please check your input." << endl;
         return false;
     }
-    int orderedNum = 0;
-    while (true) { 
-        bool isExchanged = false;//定义判断是否完成排序条件isExchanged? 
-        for (int i = 0; i < arrLen - orderedNum -1; ++i) {//利用for循环进行次数递减的遍历，因为本次排序的最大元素已在数组末尾，无需再次遍历 
-            if (array[i] > array[i+1]) {//如果前一个元素大于后一个元素，进行交换。 
-                int temp = array[i];
-                array[i] = array[i+1];
-                array[i+1] = temp;
-                isExchanged = true;//表明已进行元素的交换 
-            }
+    for (int orderedNum = 1; orderedNum < arrLen; ++orderedNum) {
+        int insertValue = array[orderedNum];
+        int orderedIndex = orderedNum - 1;
+        while(orderedIndex >=0 && array[orderedIndex] > insertValue) {
+           array[orderedIndex + 1] = array[orderedIndex];
+           --orderedIndex;
         }
-
-        if (!isExchanged) {//若没进行交换，即已有序，结束while循环。 
-            break;
-        }
-        ++orderedNum;//执行完for循环仍未排序完毕，则数组元素向右移动一位 
+        array[orderedIndex+1] = insertValue;
     }
     return true;
-}
-
+}*/
 void printArray(int array[], int arrLen) {
     for (int i = 0; i < arrLen; ++i) {
         cout << array[i] << " ";
     }
     cout << endl;
 }
+bool buckertSort(int array[], size_t arrLen, size_t bucketSize) {//定义桶排序 
+    const int DEFAULT_BUCKET_SIZE = 10;//定义桶的大小为常数10 
+    if(arrLen < 2) {//如果数组的长度小于等于1，即数组中没有元素或者仅有一个元素，则无需进行排序
+					//结束整个函数 
+        return true;
+    }
+    if (bucketSize < 1) {
+        bucketSize = DEFAULT_BUCKET_SIZE;//令桶的大小为10; 
+    }
+    // Find the scope of the array
+    int min = array[0];//初始化最小值为数组array的首元素; 
+    int max = array[0];//初始化最大值为数组array的首元素 
+    for (size_t i = 1; i < arrLen; ++i)//for循环遍历整个数组; 
+    {
+        if (min > array[i]) {//如果最小值大于数组中第i-1个位置上的元素， 
+            min = array[i];//则令第i-1个位置上的元素为最小值; 
+        }
+        else if (max < array[i]) {//如果最大值小于数组第i-1个位置上的元素 
+            max = array[i];//则令第i-1个位置上的元素为最大值; 
+        }
+    }
+    // Create buckets
+    int **buckets = new int*[bucketSize]();//定义bucket数组指针的指针，指向空间大小为桶数组的大小 
+    int *bucketLen = new int[bucketSize]();//定义bucketLen指针 ,指向空间大小为桶数组的大小 
+    int bucketScope = floor((max - min)/bucketSize) + 1;//最大值减去最小值除以桶的尺寸取整+1 
+    for (size_t j = 0; j < bucketSize; j++)//for循环遍历桶数组 
+    {
+        buckets[j] = new int[arrLen]();//将bucket指针所指位置上的元素初始化 
+    }
+    int mapIndex = -1;//初始化mapIndex值为-1
+    // Put array value to buckets 将数组的值导入buckets数组 
+    for (size_t k = 0; k < arrLen; ++k)
+    {
+        mapIndex = floor((array[k] - min)/bucketScope);//将maxIndex值赋予数组中第k-1位置上元素的值减去最小值除以桶的范围 
+        buckets[mapIndex][bucketLen[mapIndex]++] = array[k];//buckets第[索引][以及]的值赋予数组array第k-1位置上的值。 
+    }
+    // Sort value in bucket and put ordered value back to array
+    int arrayIndex = 0;//初始化数组索引值为0 
+    for (size_t l = 0; l < bucketSize; l++)
+    {
+        if (bucketLen[l] > 0) {
+            insertSort(buckets[l], bucketLen[l]);//调用插入排序函数 
+            for (size_t m = 0; m < bucketLen[l]; ++m){//for循环遍历array数组 ;
+                array[arrayIndex++] = buckets[l][m];//赋buckets[l][m]位置上的元素值给数组array索引值； 
+            }
+        }
+        delete [] buckets[l];//释放bukets指针指向第l-1个元素所占内存空间 
+        buckets[l] = NULL;//令buckets[l]指针为空 
+    }
+    delete [] buckets;//释放buckets指针所占内存空间 
+    delete [] bucketLen;//释放bucketLen指针所占内存空间 
+    return true;
+}
 int main(){
     int array0[] = {};
     int arrayLen = sizeof(array0)/sizeof(int);
     printArray(array0, arrayLen);
-    bubbleSort(array0, arrayLen);
+    insertSort(array0, arrayLen);
     printArray(array0, arrayLen);
     cout << "=========================================" << endl;
     int array1[] = {1};
     arrayLen = sizeof(array1)/sizeof(int);
     printArray(array1, arrayLen);
-    bubbleSort_Sheng(array1, arrayLen);
+    buckertSort(array1, arrayLen, 1);
     printArray(array1, arrayLen);
     cout << "=========================================" << endl;
     int array2[] = {2, 1};
     arrayLen = sizeof(array2)/sizeof(int);
     printArray(array2, arrayLen);
-    bubbleSort(array2, arrayLen);
+    buckertSort(array2, arrayLen, 2);
     printArray(array2, arrayLen);
     cout << "=========================================" << endl;
     int array3[] = {1, 5, 3};
     arrayLen = sizeof(array3)/sizeof(int);
     printArray(array3, arrayLen);
-    bubbleSort_Sheng(array3, arrayLen);
+    buckertSort(array3, arrayLen, 2);
     printArray(array3, arrayLen);
     cout << "=========================================" << endl;
     int array4[] = {9, 12, 8, 7};
     arrayLen = sizeof(array4)/sizeof(int);
     printArray(array4, arrayLen);
-    bubbleSort(array4, arrayLen);
+    buckertSort(array4, arrayLen, 2);
     printArray(array4, arrayLen);
     cout << "=========================================" << endl;
     int array5[] = {9, 12, 8, 7, 3};
     arrayLen = sizeof(array5)/sizeof(int);
     printArray(array5, arrayLen);
-    bubbleSort_Sheng(array5, arrayLen);
+    buckertSort(array5, arrayLen, 2);
     printArray(array5, arrayLen);
-}
+} 
